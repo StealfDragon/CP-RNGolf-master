@@ -10,6 +10,8 @@ class Play extends Phaser.Scene {
         this.SHOT_VELOCITY_X = 500
         this.SHOT_VELOCITY_Y_MIN = 700
         this.SHOT_VELOCITY_Y_MAX = 1700
+        this.score = parseFloat(0)
+        this.shots = parseFloat(0)
 
     }
 
@@ -23,6 +25,10 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+        this.scoreText = this.add.text(0, 0, 'Score: 0').setDepth(1)
+        this.shotsText = this.add.text(width / 2 - 175, 0, 'Shots: 0').setDepth(1)
+        this.successText = this.add.text(width - 350, 0, 'Successful Shot Percentage: 0').setDepth(1)
+
         // add background grass
         this.grass = this.add.image(0, 0, 'grass').setOrigin(0)
 
@@ -69,6 +75,9 @@ class Play extends Phaser.Scene {
 
         // add pointer input
         this.input.on('pointerdown', (pointer) => {
+            this.shots++
+            this.shotsText.setText('Shots: ' + this.shots)
+            this.successText.setText('Successful Shot Percentage: ' + (this.score / this.shots) * 100.0)
             let shotDirectionY = pointer.y <= this.ball.y ? 1 : -1 //this is an if/else statement
             let shotDirectionX = Math.abs(pointer.x - this.ball.x) < 2 ? 0 : (pointer.x < this.ball.x ? 1 : -1);
             this.ball.body.setVelocityY(Phaser.Math.Between(this.SHOT_VELOCITY_Y_MIN, 
@@ -85,6 +94,9 @@ class Play extends Phaser.Scene {
             this.ball.body.setVelocityY(0)
             ball.x = width/2
             ball.y = height - height/10
+            this.score++;
+            this.scoreText.setText('Score: ' + this.score);
+            this.successText.setText('Successful Shot Percentage: ' + (this.score / this.shots) * 100.0)
         })
 
         // ball/wall collision
@@ -104,6 +116,6 @@ CODE CHALLENGE
 Try to implement at least 3/4 of the following features during the remainder of class (hint: each takes roughly 15 or fewer lines of code to implement):
 [1] Add ball reset logic on successful shot
 [1] Improve shot logic by making pointer’s relative x-position shoot the ball in correct x-direction
-[ ] Make one obstacle move left/right and bounce against screen edges
+[1] Make one obstacle move left/right and bounce against screen edges
 [ ] Create and display shot counter, score, and successful shot percentage
 */
